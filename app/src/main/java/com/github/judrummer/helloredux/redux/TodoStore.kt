@@ -8,6 +8,8 @@ import com.github.judrummer.helloredux.model.Todo
 import io.realm.Realm
 import io.realm.RealmObject
 
+fun <S> Store<S>.jx_subscribe(lambda: () -> Unit) = this.subscribe(StoreSubscriber<S> { lambda() })
+
 sealed class TodoAction {
     object Init : TodoAction()
     object OpenRealm : TodoAction()
@@ -59,17 +61,20 @@ class RealmMiddleWare : IMiddleware<AppState> {
                 realm.close()
             }
             is TodoAction.RequestFetchTodoList -> {
-                next(TodoAction.ResponseTodos(realm.where(Todo::class.java).findAll().map { realm.copyFromRealm(it) }))
+                val items = realm.where(Todo::class.java).findAll().map { realm.copyFromRealm(it) }
+                next(TodoAction.ResponseTodos(items))
             }
             is TodoAction.RequestAdd -> {
                 realm.writeTransaction {
                     copyToRealm(Todo(ObjectId().toHexString(), action.text, false))
                 }
+                store.dispatch(TodoAction.RequestFetchTodoList)
             }
             is TodoAction.RequestDelete -> {
                 realm.writeTransaction {
                     RealmObject.deleteFromRealm(where(Todo::class.java).equalTo("id", action.id).findFirst())
                 }
+                store.dispatch(TodoAction.RequestFetchTodoList)
             }
             else -> {
                 next(action)

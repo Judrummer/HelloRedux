@@ -9,13 +9,22 @@ import android.widget.TextView
 
 import com.github.judrummer.helloredux.R
 import com.github.judrummer.helloredux.fragment.dummy.DummyContent
+import com.github.judrummer.helloredux.model.Todo
+import kotlinx.android.synthetic.main.fragment_item.view.*
 
 /**
  * [RecyclerView.Adapter] that can display a [DummyItem] and makes a call to the
  * specified [OnListFragmentInteractionListener].
  * TODO: Replace the implementation with code for your data type.
  */
-class MyItemRecyclerViewAdapter(private val mValues: List<DummyContent.DummyItem>, private val mListener: TodoListFragment.OnListFragmentInteractionListener?) : RecyclerView.Adapter<MyItemRecyclerViewAdapter.ViewHolder>() {
+class MyItemRecyclerViewAdapter : RecyclerView.Adapter<MyItemRecyclerViewAdapter.ViewHolder>() {
+
+    var items: List<Todo> = listOf()
+        set(value) {
+            field = value
+            notifyDataSetChanged()
+        }
+    var listener: TodoListFragment.OnListFragmentInteractionListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.fragment_item, parent, false)
@@ -23,31 +32,24 @@ class MyItemRecyclerViewAdapter(private val mValues: List<DummyContent.DummyItem
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.mItem = mValues[position]
-        holder.mIdView.text = mValues[position].id
-        holder.mContentView.text = mValues[position].content
-
-        holder.mView.setOnClickListener {
-            mListener?.onListFragmentInteraction(holder.mItem!!)
+        holder.itemView.apply {
+            tvItemId.text = items[position].id
+            tvItemText.text = items[position].text
+            setOnClickListener {
+                listener?.onListFragmentInteraction(items[position])
+            }
         }
+
     }
 
     override fun getItemCount(): Int {
-        return mValues.size
+        return items.size
     }
 
-    inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
-        val mIdView: TextView
-        val mContentView: TextView
-        var mItem: DummyContent.DummyItem? = null
-
-        init {
-            mIdView = mView.findViewById(R.id.id) as TextView
-            mContentView = mView.findViewById(R.id.content) as TextView
-        }
+    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
         override fun toString(): String {
-            return super.toString() + " '" + mContentView.text + "'"
+            return super.toString() + " '" + itemView.tvItemText.text + "'"
         }
     }
 }
