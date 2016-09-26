@@ -61,7 +61,7 @@ class RealmMiddleWare : IMiddleware<AppState> {
                 realm.close()
             }
             is TodoAction.RequestFetchTodoList -> {
-                val items = realm.where(Todo::class.java).findAll().map { realm.copyFromRealm(it) }
+                val items = realm.where(Todo::class.java).findAll().map { realm.copyFromRealm(it) }.sortedByDescending { it.createdDate }
                 next(TodoAction.ResponseTodos(items))
             }
             is TodoAction.RequestAdd -> {

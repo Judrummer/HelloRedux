@@ -15,14 +15,14 @@ import com.github.judrummer.helloredux.model.Todo
 import com.github.judrummer.helloredux.redux.TodoAction
 import com.github.judrummer.helloredux.redux.jx_subscribe
 import com.github.judrummer.helloredux.redux.todoStore
-import kotlinx.android.synthetic.main.fragment_item_list.*
+import kotlinx.android.synthetic.main.fragment_todo_list.*
 
 class TodoListFragment : Fragment() {
 
     private var columnCount = 1
     private var listener: OnListFragmentInteractionListener? = null
     private var subscription: IStoreSubscription? = null
-    private var adapter: MyItemRecyclerViewAdapter? = null
+    private var adapter: TodoItemRecyclerViewAdapter? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (arguments != null) {
@@ -31,11 +31,11 @@ class TodoListFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View?
-            = inflater!!.inflate(R.layout.fragment_item_list, container, false)
+            = inflater!!.inflate(R.layout.fragment_todo_list, container, false)
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        adapter = MyItemRecyclerViewAdapter()
+        adapter = TodoItemRecyclerViewAdapter()
         rvTodoList.apply {
             layoutManager = if (columnCount <= 1) LinearLayoutManager(context) else GridLayoutManager(context, columnCount)
             adapter = this@TodoListFragment.adapter

@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 
 import com.github.judrummer.helloredux.R
@@ -28,13 +29,25 @@ class TodoAddFragment : Fragment() {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        btAddTodo.setOnClickListener {
-            if (etAddTodo.text.toString().isBlank()) {
-                Toast.makeText(context, "Please Type Text", Toast.LENGTH_SHORT).show()
+        etAddTodo.setOnEditorActionListener { textView, actionId, keyEvent ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                addTodo()
+                true
             } else {
-                todoStore.dispatch(TodoAction.RequestAdd(etAddTodo.text.toString()))
-                etAddTodo.setText("")
+                false
             }
+        }
+        btAddTodo.setOnClickListener {
+            addTodo()
+        }
+    }
+
+    fun addTodo() {
+        if (etAddTodo.text.toString().isBlank()) {
+            Toast.makeText(context, "Please Type Text", Toast.LENGTH_SHORT).show()
+        } else {
+            todoStore.dispatch(TodoAction.RequestAdd(etAddTodo.text.toString()))
+            etAddTodo.setText("")
         }
     }
 

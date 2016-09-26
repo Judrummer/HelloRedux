@@ -38,7 +38,8 @@ dependencies {
             "com.github.verachadw:kreference:0.7.0",
             'com.github.beyondeye.reduks:reduks-core:2.0.0b7',
             'com.github.beyondeye.reduks:reduks-devtools:2.0.0b7',
-            'com.github.beyondeye.reduks:reduks-android:2.0.0b7'
+            'com.github.beyondeye.reduks:reduks-android:2.0.0b7',
+            "com.googlecode.java-diff-utils:diffutils:1.3.0"
     )
     testCompile(
             "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion",
