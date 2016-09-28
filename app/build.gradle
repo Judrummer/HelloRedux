@@ -5,7 +5,7 @@ apply plugin: 'realm-android'
 
 android {
     compileSdkVersion 24
-    buildToolsVersion "24.0.1"
+    buildToolsVersion "24.0.2"
     defaultConfig {
         applicationId "com.github.judrummer.helloredux"
         minSdkVersion 15
@@ -47,10 +47,8 @@ dependencies {
             "org.jetbrains.spek:spek-api:$spekVersion",
             "org.jetbrains.spek:spek-junit-platform-engine:$spekVersion",
             "org.jetbrains.kotlin:kotlin-test:$kotlinVersion",
-//            "com.android.support.test:runner:0.5",
             "com.android.support:appcompat-v7:$suppportVersion",
             "org.junit.platform:junit-platform-runner:1.0.0-M2")
-//    testRuntime "org.jetbrains.spek:spek-junit-platform-engine:$spekVersion"
 
     compile 'com.android.support:support-v4:24.2.0'
     compile 'com.android.support:recyclerview-v7:24.2.0'
