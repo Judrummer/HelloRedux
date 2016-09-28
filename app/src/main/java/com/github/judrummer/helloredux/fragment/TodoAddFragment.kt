@@ -13,9 +13,12 @@ import android.widget.Toast
 import com.github.judrummer.helloredux.R
 import com.github.judrummer.helloredux.redux.TodoAction
 import com.github.judrummer.helloredux.redux.todoStore
+import io.realm.Realm
 import kotlinx.android.synthetic.main.fragment_todo_add.*
 
 class TodoAddFragment : Fragment() {
+
+    lateinit var realm: Realm
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,6 +32,7 @@ class TodoAddFragment : Fragment() {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        realm = Realm.getDefaultInstance()
         etAddTodo.setOnEditorActionListener { textView, actionId, keyEvent ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 addTodo()
@@ -40,13 +44,20 @@ class TodoAddFragment : Fragment() {
         btAddTodo.setOnClickListener {
             addTodo()
         }
+        realm = Realm.getDefaultInstance()
     }
+
+    override fun onDestroyView() {
+        realm.close()
+        super.onDestroyView()
+    }
+
 
     fun addTodo() {
         if (etAddTodo.text.toString().isBlank()) {
             Toast.makeText(context, "Please Type Text", Toast.LENGTH_SHORT).show()
         } else {
-            todoStore.dispatch(TodoAction.RequestAdd(etAddTodo.text.toString()))
+            todoStore.dispatch(TodoAction.RequestAdd(realm, etAddTodo.text.toString()))
             etAddTodo.setText("")
         }
     }

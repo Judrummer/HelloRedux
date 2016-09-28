@@ -11,12 +11,7 @@ class TodoApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         Realm.setDefaultConfiguration(RealmConfiguration.Builder(this).name("helloredux.realm").schemaVersion(1).deleteRealmIfMigrationNeeded().build())
-        todoStore.dispatch(TodoAction.OpenRealm)
     }
 
-    override fun onTerminate() {
-        todoStore.dispatch(TodoAction.CloseRealm)
-        super.onTerminate()
-    }
 }
 

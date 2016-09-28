@@ -12,11 +12,12 @@ fun <S> Store<S>.jx_subscribe(lambda: () -> Unit) = this.subscribe(StoreSubscrib
 
 sealed class TodoAction {
     object Init : TodoAction()
-    object OpenRealm : TodoAction()
-    object CloseRealm : TodoAction()
-    object RequestFetchTodoList : TodoAction()
-    class RequestAdd(val text: String) : TodoAction()
-    class RequestDelete(val id: String) : TodoAction()
+    //    object OpenRealm : TodoAction()
+//    object CloseRealm : TodoAction()
+    class RequestFetchTodoList(val realm: Realm) : TodoAction()
+
+    class RequestAdd(val realm: Realm, val text: String) : TodoAction()// maybe  class RequestAdd(val realm:Realm, val text: String) : TodoAction()
+    class RequestDelete(val realm: Realm, val id: String) : TodoAction()// maybe class RequestDelete(val realm:Realm, val id: String) : TodoAction()
     class ResponseTodos(val todos: List<Todo>) : TodoAction()
     object StartLoading : TodoAction()
     object FinishLoading : TodoAction()
@@ -48,33 +49,36 @@ fun todoListReducer(): ReducerImpl<TodoListState> = Reducer { state, action ->
 
 class RealmMiddleWare : IMiddleware<AppState> {
 
-    private lateinit var realm: Realm
+//    private lateinit var realm: Realm
 
     override fun dispatch(store: Store<AppState>, next: (Any) -> Any, action: Any): Any {
         when (action) {
-            is TodoAction.OpenRealm -> {
-                Log.d("REALMDEBUG", "Open Realm")
-                realm = Realm.getDefaultInstance()
-            }
-            is TodoAction.CloseRealm -> {
-                Log.d("REALMDEBUG", "Close Realm")
-                realm.close()
-            }
+//            is TodoAction.OpenRealm -> {
+//                Log.d("REALMDEBUG", "Open Realm")
+//                realm = Realm.getDefaultInstance()
+//            }
+//            is TodoAction.CloseRealm -> {
+//                Log.d("REALMDEBUG", "Close Realm")
+//                realm.close()
+//            }
             is TodoAction.RequestFetchTodoList -> {
+                val realm = action.realm
                 val items = realm.where(Todo::class.java).findAll().map { realm.copyFromRealm(it) }.sortedByDescending { it.createdDate }
                 next(TodoAction.ResponseTodos(items))
             }
             is TodoAction.RequestAdd -> {
+                val realm = action.realm
                 realm.writeTransaction {
                     copyToRealm(Todo(ObjectId().toHexString(), action.text, false))
                 }
-                store.dispatch(TodoAction.RequestFetchTodoList)
+                store.dispatch(TodoAction.RequestFetchTodoList(realm))
             }
             is TodoAction.RequestDelete -> {
+                val realm = action.realm
                 realm.writeTransaction {
                     RealmObject.deleteFromRealm(where(Todo::class.java).equalTo("id", action.id).findFirst())
                 }
-                store.dispatch(TodoAction.RequestFetchTodoList)
+                store.dispatch(TodoAction.RequestFetchTodoList(realm))
             }
             else -> {
                 next(action)
