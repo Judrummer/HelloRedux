@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.github.judrummer.helloredux.R
 import com.github.judrummer.helloredux.model.Todo
+import com.github.judrummer.helloredux.redux.DbAction
 import com.github.judrummer.helloredux.redux.TodoAction
 import com.github.judrummer.helloredux.redux.todoStore
 import difflib.Delta
@@ -67,7 +68,7 @@ class TodoItemRecyclerViewAdapter : RecyclerView.Adapter<TodoItemRecyclerViewAda
             tvItemId.text = item.id
             tvItemText.text = item.text
             btItemDelete.setOnClickListener {
-                todoStore.dispatch(TodoAction.RequestDelete(item.id))
+                todoStore.dispatch(DbAction.DeleteTodo(item.id))
             }
             setOnClickListener {
                 listener?.onListFragmentInteraction(item)

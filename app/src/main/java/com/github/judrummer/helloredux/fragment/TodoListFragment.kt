@@ -10,8 +10,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.beyondeye.reduks.IStoreSubscription
+import com.beyondeye.reduks.subscribe
 import com.github.judrummer.helloredux.R
 import com.github.judrummer.helloredux.model.Todo
+import com.github.judrummer.helloredux.redux.DbAction
 import com.github.judrummer.helloredux.redux.TodoAction
 import com.github.judrummer.helloredux.redux.jx_subscribe
 import com.github.judrummer.helloredux.redux.todoStore
@@ -44,12 +46,12 @@ class TodoListFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        subscription = todoStore.jx_subscribe {
+        subscription = todoStore.subscribe {
             val state = todoStore.state.todoListState
-            Log.d("MYDEBUG","State Change $state")
+            Log.d("MYDEBUG", "State Change $state")
             adapter?.items = state.todos
         }
-        todoStore.dispatch(TodoAction.RequestFetchTodoList)
+        todoStore.dispatch(DbAction.FetchTodoList)
     }
 
     override fun onStop() {

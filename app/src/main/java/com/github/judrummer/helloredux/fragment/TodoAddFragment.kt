@@ -11,6 +11,7 @@ import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 
 import com.github.judrummer.helloredux.R
+import com.github.judrummer.helloredux.redux.DbAction
 import com.github.judrummer.helloredux.redux.TodoAction
 import com.github.judrummer.helloredux.redux.todoStore
 import kotlinx.android.synthetic.main.fragment_todo_add.*
@@ -46,7 +47,7 @@ class TodoAddFragment : Fragment() {
         if (etAddTodo.text.toString().isBlank()) {
             Toast.makeText(context, "Please Type Text", Toast.LENGTH_SHORT).show()
         } else {
-            todoStore.dispatch(TodoAction.RequestAdd(etAddTodo.text.toString()))
+            todoStore.dispatch(DbAction.AddTodo(etAddTodo.text.toString()))
             etAddTodo.setText("")
         }
     }
