@@ -15,7 +15,6 @@ import com.github.judrummer.helloredux.R
 import com.github.judrummer.helloredux.model.Todo
 import com.github.judrummer.helloredux.redux.DbAction
 import com.github.judrummer.helloredux.redux.TodoAction
-import com.github.judrummer.helloredux.redux.jx_subscribe
 import com.github.judrummer.helloredux.redux.todoStore
 import kotlinx.android.synthetic.main.fragment_todo_list.*
 
