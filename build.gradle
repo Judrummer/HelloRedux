@@ -13,8 +13,8 @@ buildscript {
 }
 allprojects {
     ext {
-        suppportVersion = '24.2.0'
-        kotlinVersion = '1.0.4'
+        suppportVersion = '25.0.1'
+        kotlinVersion = '1.0.6'
         spekVersion = '1.0.89'
         junitVersion = '4.12'
         reduksVersion ='2.0.0b8'

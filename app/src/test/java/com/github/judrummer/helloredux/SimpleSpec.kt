@@ -8,7 +8,7 @@ import org.junit.runner.RunWith
 import kotlin.test.assertEquals
 
 @RunWith(JUnitPlatform::class)
-class SimpleSpec() : Spek({
+class SimpleSpec : Spek({
     describe("a calculator") {
         val calculator = SampleCalculator()
 

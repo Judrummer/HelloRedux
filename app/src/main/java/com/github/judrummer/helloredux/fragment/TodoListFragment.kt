@@ -16,14 +16,40 @@ import com.github.judrummer.helloredux.model.Todo
 import com.github.judrummer.helloredux.redux.DbAction
 import com.github.judrummer.helloredux.redux.TodoAction
 import com.github.judrummer.helloredux.redux.todoStore
+import com.github.judrummer.jxadapter.JxAdapter
+import com.github.judrummer.jxadapter.JxDiffUtil
+import com.github.judrummer.jxadapter.JxViewHolder
 import kotlinx.android.synthetic.main.fragment_todo_list.*
+import kotlinx.android.synthetic.main.item_todo.view.*
 
 class TodoListFragment : Fragment() {
 
     private var columnCount = 1
     private var listener: OnListFragmentInteractionListener? = null
     private var subscription: IStoreSubscription? = null
-    private var adapter: TodoItemRecyclerViewAdapter? = null
+//    private var adapter: TodoItemRecyclerViewAdapter? = null
+    val todoAdapter by lazy {
+        JxAdapter(JxViewHolder<Todo>(R.layout.item_todo) { position, item ->
+            itemView.apply {
+                tvItemId.visibility = View.GONE
+                tvItemId.text = item.id
+                tvItemText.text = item.text
+                btItemDelete.setOnClickListener {
+                    todoStore.dispatch(DbAction.DeleteTodo(item.id))
+                }
+                setOnClickListener {
+                    listener?.onListFragmentInteraction(item)
+                }
+            }
+        }, jxDiffUtil = object : JxDiffUtil() {
+            override val areItemsTheSame: (Any, Any) -> Boolean =
+                    { old, new ->
+                        (old is Todo && new is Todo) && old.id == new.id
+                    }
+
+        })
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (arguments != null) {
@@ -36,10 +62,10 @@ class TodoListFragment : Fragment() {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        adapter = TodoItemRecyclerViewAdapter()
+//        adapter = TodoItemRecyclerViewAdapter()
         rvTodoList.apply {
             layoutManager = if (columnCount <= 1) LinearLayoutManager(context) else GridLayoutManager(context, columnCount)
-            adapter = this@TodoListFragment.adapter
+            adapter = todoAdapter//this@TodoListFragment.adapter
         }
     }
 
@@ -48,7 +74,8 @@ class TodoListFragment : Fragment() {
         subscription = todoStore.subscribe {
             val state = todoStore.state.todoListState
             Log.d("MYDEBUG", "State Change $state")
-            adapter?.items = state.todos
+//            adapter?.items = state.todos
+            todoAdapter.items = state.todos
         }
         todoStore.dispatch(DbAction.FetchTodoList)
     }
@@ -89,4 +116,5 @@ class TodoListFragment : Fragment() {
 
     }
 }
+
 
