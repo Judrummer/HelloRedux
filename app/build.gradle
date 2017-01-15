@@ -38,9 +38,10 @@ dependencies {
             "com.github.judrummer.jxadapter:jxadapter:0.3.0",
             "com.github.judrummer.jxadapter:jxadapter-rxjava:0.3.0",
             "com.github.verachadw:kreference:0.7.0",
-            "com.github.beyondeye.reduks:reduks-core:$reduksVersion",
-            "com.github.beyondeye.reduks:reduks-devtools:$reduksVersion",
-            "com.github.beyondeye.reduks:reduks-android:$reduksVersion",
+//            "com.github.beyondeye.reduks:reduks-core:$reduksVersion",
+//            "com.github.beyondeye.reduks:reduks-devtools:$reduksVersion",
+//            "com.github.beyondeye.reduks:reduks-android:$reduksVersion",
+            'com.github.pardom.redux-kotlin:lib:1.1.0',
             "com.googlecode.java-diff-utils:diffutils:1.3.0"
     )
     testCompile(

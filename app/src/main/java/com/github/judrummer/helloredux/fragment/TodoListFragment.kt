@@ -9,8 +9,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.beyondeye.reduks.IStoreSubscription
-import com.beyondeye.reduks.subscribe
 import com.github.judrummer.helloredux.R
 import com.github.judrummer.helloredux.model.Todo
 import com.github.judrummer.helloredux.redux.DbAction
@@ -21,13 +19,13 @@ import com.github.judrummer.jxadapter.JxDiffUtil
 import com.github.judrummer.jxadapter.JxViewHolder
 import kotlinx.android.synthetic.main.fragment_todo_list.*
 import kotlinx.android.synthetic.main.item_todo.view.*
+import redux.api.Store
 
 class TodoListFragment : Fragment() {
 
     private var columnCount = 1
     private var listener: OnListFragmentInteractionListener? = null
-    private var subscription: IStoreSubscription? = null
-//    private var adapter: TodoItemRecyclerViewAdapter? = null
+    private var subscription: Store.Subscription? = null
     val todoAdapter by lazy {
         JxAdapter(JxViewHolder<Todo>(R.layout.item_todo) { position, item ->
             itemView.apply {
@@ -62,10 +60,9 @@ class TodoListFragment : Fragment() {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//        adapter = TodoItemRecyclerViewAdapter()
         rvTodoList.apply {
             layoutManager = if (columnCount <= 1) LinearLayoutManager(context) else GridLayoutManager(context, columnCount)
-            adapter = todoAdapter//this@TodoListFragment.adapter
+            adapter = todoAdapter
         }
     }
 
@@ -74,7 +71,6 @@ class TodoListFragment : Fragment() {
         subscription = todoStore.subscribe {
             val state = todoStore.state.todoListState
             Log.d("MYDEBUG", "State Change $state")
-//            adapter?.items = state.todos
             todoAdapter.items = state.todos
         }
         todoStore.dispatch(DbAction.FetchTodoList)

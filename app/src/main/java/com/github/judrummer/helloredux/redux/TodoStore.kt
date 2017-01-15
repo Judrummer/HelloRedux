@@ -1,11 +1,14 @@
 package com.github.judrummer.helloredux.redux
 
-import com.beyondeye.reduks.*
-import com.beyondeye.reduks.middlewares.applyMiddleware
 import com.github.judrummer.helloredux.ObjectId
 import com.github.judrummer.helloredux.model.Todo
 import io.realm.Realm
 import io.realm.RealmObject
+import redux.api.Reducer
+import redux.api.Store
+import redux.api.enhancer.Middleware
+import redux.applyMiddleware
+import redux.createStore
 
 sealed class TodoAction {
     object Init : TodoAction()
@@ -25,12 +28,12 @@ data class AppState(val todoListState: TodoListState = TodoListState())
 
 data class TodoListState(val todos: List<Todo> = listOf(), val loading: Boolean = false)
 
-fun appReducer(): ReducerImpl<AppState> = Reducer { state, action ->
+fun appReducer() = Reducer<AppState> { state, action ->
     val todoListState = todoListReducer().reduce(state.todoListState, action)
     AppState(todoListState)
 }
 
-fun todoListReducer(): ReducerImpl<TodoListState> = Reducer { state, action ->
+fun todoListReducer() = Reducer<TodoListState> { state, action ->
     when (action) {
         is TodoAction.Init -> TodoListState()
         is TodoAction.ResponseTodos -> state.copy(todos = action.todos)
@@ -41,13 +44,13 @@ fun todoListReducer(): ReducerImpl<TodoListState> = Reducer { state, action ->
 }
 //
 
-fun realmMiddleware(): IMiddleware<AppState> = Middleware { store, next, action ->
+fun realmMiddleware() = Middleware<AppState> { store, next, action ->
     if (action is DbAction) {
         val realm = Realm.getDefaultInstance()
         when (action) {
             is DbAction.FetchTodoList -> {
                 val items = realm.where(Todo::class.java).findAll().map { realm.copyFromRealm(it) }.sortedByDescending { it.createdDate }
-                next(TodoAction.ResponseTodos(items))
+                next.dispatch(TodoAction.ResponseTodos(items))
             }
             is DbAction.AddTodo -> {
                 realm.writeTransaction {
@@ -64,11 +67,11 @@ fun realmMiddleware(): IMiddleware<AppState> = Middleware { store, next, action 
         }
         realm.close()
     } else {
-        next(action)
+        next.dispatch(action)
     }
 }
 
-val todoStore = SimpleStore(AppState(), appReducer()).applyMiddleware(realmMiddleware())
+val todoStore = createStore(appReducer(), AppState(), applyMiddleware(realmMiddleware()))
 
 
 fun <T : Any> Realm.writeTransaction(init: Realm.() -> T): T {
